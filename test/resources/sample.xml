@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root>
+    <noisyTag>
+        <ignorableItems>
+            <ignorableItem>
+                I am an ignorable piece of text
+            </ignorableItem>
+        </ignorableItems>
+        <items>
+            <item>
+                <tagOne>
+                    I am some text in tagOne
+                </tagOne>
+                <tagTwo>
+                    I am some text in tagTwo
+                </tagTwo>
+            </item>
+            <item>
+                <tagOne>
+                    I am some text in tagOne TWO
+                </tagOne>
+                <tagTwo>
+                    I am some text in tagTwo TWO
+                </tagTwo>
+            </item>
+        </items>
+    </noisyTag>
+    <!-- This is a comment for your pleasure. -->
+</Root>
