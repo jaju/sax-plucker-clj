@@ -1,7 +1,7 @@
 # sax-plucker
 
 A Clojure library to deal with SAX-streams in a chunked manner, plucking cohesive pieces and streaming them.
-Uses `data.xml` - without absolutely any validations. Assumes well-formed XML.
+Uses `data.xml` - without absolutely any validations. *Assumes well-formed XML*.
 
 ## Motivation
 This library is primarily meant to deal with very large XMLs (hence, SAX), but where there are many repeating,
@@ -69,6 +69,10 @@ Quick note for large files - you need to pass some options to the JVM at startup
 `-DtotalEntitySizeLimit=2147480000 -Djdk.xml.totalEntitySizeLimit=2147480000`
 The default limit is 50000000 entities otherwise, after which the underlying XML library aborts processing.
 See https://github.com/dbpedia/extraction-framework/issues/487
+
+Notes:
+1. This library was quick-tested on a > 1.7G compressed XML file, and the aggregates matched perfectly 
+with a grep-check.
 
 ## License
 
