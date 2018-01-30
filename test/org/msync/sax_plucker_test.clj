@@ -12,10 +12,11 @@
       (is
         (= :item (#'core/get-name (first updated-streamer))))))
 
-  (let [[remaining-stream elements] (#'core/pluck updated-streamer)
-        [remaining-stream more-elements] (#'core/pluck remaining-stream)
-        [remaining-stream and-more-elements] (#'core/pluck remaining-stream)]
-    (deftest pluck-tests
+  (deftest pluck-tests
+    (let [p (stream-plucks updated-streamer)
+          [elements more-elements and-more-elements] (into [] (map :elements p))]
+      (testing "Sanity check - number of entities plucked"
+        (is (= 3 (count p))))
       (testing "Plucks one complete sub-tree at given location"
         (is
           (= :item (#'core/get-name (first elements)))))
@@ -24,4 +25,10 @@
           (= :someOtherItem (#'core/get-name (first more-elements)))))
       (testing "And then, one more."
         (is
-          (= :item (#'core/get-name (first and-more-elements))))))))
+          (= :item (#'core/get-name (first and-more-elements)))))))
+
+  (let [file-path     "test/resources/sample.xml"
+        plucks-stream (stream-plucks (create-sax-streamer file-path) :descend-path "Root/noisyTag/items")]
+    (deftest valid-xml-collections
+        (testing "Count"
+          (is (= 3 (count plucks-stream)))))))

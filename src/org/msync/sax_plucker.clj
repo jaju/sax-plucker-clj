@@ -7,6 +7,7 @@
            [clojure.data.xml.event EndElementEvent StartElementEvent]))
 
 (defrecord Pluck [elements])
+(defrecord PluckStream [elements stream])
 
 (defn new-pluck []
   (->Pluck (atom (transient []))))
@@ -62,7 +63,11 @@
     (loop [stack            (into '() (take 1 stream))
            remaining-stream (rest stream)]
       (if (or (empty? stack) (empty? stream))
-        [remaining-stream (get-elements plucked-elements)]
+
+        (let [elements (get-elements plucked-elements)]
+          (if-not (empty? elements)
+                  (->PluckStream elements remaining-stream)))
+
         (let [nxt   (first remaining-stream)
               stack (cond
                       (tag-begin? nxt) (cons nxt stack)
@@ -90,8 +95,8 @@
 
           (do
             (recur (-> remaining-stream
-                       pluck
-                       first
+                       (pluck :keep? false)
+                       :stream
                        skip-until-start-tag)
                    remaining-match))
 
@@ -99,5 +104,14 @@
                      rest
                      skip-until-start-tag)
                  (rest remaining-match)))))))
+
+(defn stream-plucks [stream & {:keys [descend-path]
+                               :or {descend-path nil}}]
+  (let [stream (if descend-path
+                 (skip stream descend-path)
+                 stream)]
+    (lazy-seq
+      (when-let [nxt (pluck stream)]
+        (cons nxt (stream-plucks (:stream nxt)))))))
 
 
