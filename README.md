@@ -15,7 +15,60 @@ a repetitive, boring job. Irrespective of the contents.
 
 ## Usage
 
-Coming soon.
+```clojure
+(stream-plucks (-> "/path/to/xml/file.gz" 
+                   (create-sax-streamer :gzipped? true) 
+                   (skip "step/down/path")))
+```
+
+For example, you have an XML which looks like the following
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Root>
+    <noisyTag>
+        <ignorableItems>
+            <ignorableItem>
+                I am an ignorable piece of text
+            </ignorableItem>
+        </ignorableItems>
+        <items>
+            <item>
+                <tagOne>
+                    I am some text in tagOne
+                </tagOne>
+                <tagTwo>
+                    I am some text in tagTwo
+                </tagTwo>
+            </item>
+            <item>
+                <tagOne>
+                    I am some text in tagOne TWO
+                </tagOne>
+                <tagTwo>
+                    I am some text in tagTwo TWO
+                </tagTwo>
+            </item>
+        </items>
+    </noisyTag>
+    <!-- This is a comment for your pleasure. -->
+</Root>
+```
+
+The following code will give you two groups of XML elements, each rooted at `item`
+```clojure
+(require '[org.msync.sax-plucker :refer [create-sax-streamer skip]])
+;...
+(stream-plucks (-> "sample.xml"
+                   (create-sax-streamer)
+                   (skip "Root/noisyTag/items")))
+```
+
+More usage examples to follow.
+
+Quick note for large files - you need to pass some options to the JVM at startup. Example
+`-DtotalEntitySizeLimit=2147480000 -Djdk.xml.totalEntitySizeLimit=2147480000`
+The default limit is 50000000 entities otherwise, after which the underlying XML library aborts processing.
+See https://github.com/dbpedia/extraction-framework/issues/487
 
 ## License
 
