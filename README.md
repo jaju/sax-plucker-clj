@@ -66,9 +66,11 @@ The following code will give you two groups of XML elements, each rooted at `ite
 More usage examples to follow.
 
 Quick note for large files - you need to pass some options to the JVM at startup. Example
+
 `-DtotalEntitySizeLimit=2147480000 -Djdk.xml.totalEntitySizeLimit=2147480000`
+
 The default limit is 50000000 entities otherwise, after which the underlying XML library aborts processing.
-See https://github.com/dbpedia/extraction-framework/issues/487
+See one example at https://github.com/dbpedia/extraction-framework/issues/487
 
 Notes:
 1. This library was quick-tested on a > 1.7G compressed XML file, and the aggregates matched perfectly 
