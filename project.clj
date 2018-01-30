@@ -11,4 +11,6 @@
                  [org.clojure/data.xml "0.2.0-alpha5"]
                  [org.clojure/tools.logging "0.4.0"]]
 
+  :jvm-opts ["-Xmx1g" "-DtotalEntitySizeLimit=2147480000" "-Djdk.xml.totalEntitySizeLimit=2147480000"]
+
   :plugins [[lein-auto "0.1.3"]])
