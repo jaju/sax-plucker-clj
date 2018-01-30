@@ -10,7 +10,7 @@
   (deftest descend-paths
     (testing "Given a unix-like path, returns an updated sequence with head just after the requested location"
       (is
-        (= :item (-> updated-streamer first get-name)))))
+        (= :item (#'core/get-name (first updated-streamer))))))
 
   (let [[remaining-stream elements] (#'core/pluck updated-streamer)
         [remaining-stream more-elements] (#'core/pluck remaining-stream)
@@ -18,10 +18,10 @@
     (deftest pluck-tests
       (testing "Plucks one complete sub-tree at given location"
         (is
-          (= :item (-> elements first get-name))))
+          (= :item (#'core/get-name (first elements)))))
       (testing "Plucks one more complete sub-tree when invoked again"
         (is
-          (= :someOtherItem (-> more-elements first get-name))))
+          (= :someOtherItem (#'core/get-name (first more-elements)))))
       (testing "And then, one more."
         (is
-          (= :item (-> and-more-elements first get-name)))))))
+          (= :item (#'core/get-name (first and-more-elements))))))))

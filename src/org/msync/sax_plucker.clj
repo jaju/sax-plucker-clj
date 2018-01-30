@@ -9,11 +9,13 @@
 (defrecord Pluck [elements])
 
 (defn new-pluck []
-  (->Pluck (atom [])))
+  (->Pluck (atom (transient []))))
 
 (defn add-element! [p e]
-  (println (str "Appending element " (str e)))
-  (swap! (:elements p) conj e))
+  (swap! (:elements p) conj! e))
+
+(defn get-elements [p]
+  (persistent! @(:elements p)))
 
 (defn- get-input-stream [file-path gzipped?]
   (let [input-stream (io/input-stream file-path)]
@@ -32,7 +34,7 @@
        (map keyword)
        (into [])))
 
-(defn get-name [e]
+(defn- get-name [e]
   (:tag e))
 
 (defn- tag-begin? [e]
@@ -57,11 +59,10 @@
         plucked-elements (new-pluck)
         _                (if-not (empty? stream)
                            (add-element! plucked-elements (first stream)))]
-    (println (str "Starting new pluck with " (str @(:elements plucked-elements))))
     (loop [stack            (into '() (take 1 stream))
            remaining-stream (rest stream)]
       (if (or (empty? stack) (empty? stream))
-        [remaining-stream @(:elements plucked-elements)]
+        [remaining-stream (get-elements plucked-elements)]
         (let [nxt   (first remaining-stream)
               stack (cond
                       (tag-begin? nxt) (cons nxt stack)
@@ -88,7 +89,6 @@
               (not= (first remaining-match) (get-name (first remaining-stream))))
 
           (do
-            (log/info "First of remaining match is " (first remaining-match))
             (recur (-> remaining-stream
                        pluck
                        first
