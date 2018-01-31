@@ -1,4 +1,4 @@
-# sax-plucker
+# sax-plucker [![Build Status](https://secure.travis-ci.org/jaju/sax-plucker-clj.png)](http://travis-ci.org/jaju/sax-plucker-clj)
 
 A Clojure library to deal with SAX-streams in a chunked manner, plucking cohesive pieces and streaming them.
 Uses `data.xml` - without absolutely any validations. *Assumes well-formed XML*.
