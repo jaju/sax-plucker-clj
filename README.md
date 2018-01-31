@@ -56,7 +56,7 @@ For example, you have an XML which looks like the following
 
 The following code will give you two groups of XML elements, each rooted at `item`
 ```clojure
-(:require [org.msync.sax-plucker :refer [create-sax-streamer skip]]
+(:require [org.msync.sax-plucker :refer [stream-plucks]]
           [xml-in.core :refer [find-all]]) ;; https://github.com/tolitius/xml-in for testing.
 ;...
 ; Pseudo-clojure.test code
