@@ -58,9 +58,9 @@ The following code will give you two groups of XML elements, each rooted at `ite
 ```clojure
 (require '[org.msync.sax-plucker :refer [create-sax-streamer skip]])
 ;...
-(stream-plucks (-> "sample.xml"
-                   (create-sax-streamer)
-                   (skip "Root/noisyTag/items")))
+(stream-plucks "sample.xml" :descend-path "Root/noisyTag/items" :as-dom? true)
+
+;; Returns a stream of DOM trees rooted at the "item" nodes.
 ```
 
 More usage examples to follow.
