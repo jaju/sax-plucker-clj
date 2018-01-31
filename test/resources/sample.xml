@@ -8,23 +8,15 @@
         </ignorableItems>
         <items>
             <item>
-                <tagOne>
-                    I am some text in tagOne
-                </tagOne>
-                <tagTwo>
-                    I am some text in tagTwo
-                </tagTwo>
+                <tagOne>I am some text in tagOne</tagOne>
+                <tagTwo>I am some text in tagTwo</tagTwo>
             </item>
             <someOtherItem>
                 <someOtherTag>I am in the middle of nowhere</someOtherTag>
             </someOtherItem>
             <item>
-                <tagOne>
-                    I am some text in tagOne TWO
-                </tagOne>
-                <tagTwo>
-                    I am some text in tagTwo TWO
-                </tagTwo>
+                <tagOne>I am some text in tagOne TWO</tagOne>
+                <tagTwo>I am some text in tagTwo TWO</tagTwo>
             </item>
         </items>
     </noisyTag>

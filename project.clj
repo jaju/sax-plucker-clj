@@ -9,7 +9,9 @@
 
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/data.xml "0.2.0-alpha5"]
-                 [org.clojure/tools.logging "0.4.0"]]
+                 [org.clojure/tools.logging "0.4.0"]
+
+                 [tolitius/xml-in "0.1.0" :scope "test"]]
 
   :jvm-opts ["-Xmx1g" "-DtotalEntitySizeLimit=2147480000" "-Djdk.xml.totalEntitySizeLimit=2147480000"]
 

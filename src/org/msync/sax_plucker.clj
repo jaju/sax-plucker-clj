@@ -1,34 +1,28 @@
 (ns org.msync.sax-plucker
   (:require [clojure.java.io :as io]
             [clojure.data.xml :as xml]
+            [clojure.data.xml.tree :refer [event-tree]]
             [clojure.string :as string]
             [clojure.tools.logging :as log])
   (:import [java.util.zip GZIPInputStream]
            [clojure.data.xml.event EndElementEvent StartElementEvent]))
 
-(defrecord Pluck [elements])
 (defrecord PluckStream [elements stream])
 
-(defn new-pluck []
-  (->Pluck (atom (transient []))))
+(defn- new-pluck []
+  (atom (transient [])))
 
-(defn add-element! [p e]
-  (swap! (:elements p) conj! e))
+(defn- add-element! [p e]
+  (swap! p conj! e))
 
-(defn get-elements [p]
-  (persistent! @(:elements p)))
+(defn- get-elements! [p]
+  (persistent! @p))
 
 (defn- get-input-stream [file-path gzipped?]
   (let [input-stream (io/input-stream file-path)]
     (if gzipped?
       (GZIPInputStream. input-stream)
       input-stream)))
-
-(defn create-sax-streamer [file-path & {:keys [gzipped?]
-                                        :or   {gzipped? false}}]
-  (let [input-stream (get-input-stream file-path gzipped?)
-        parser-opts  {:skip-whitespace true}]
-    (xml/event-seq input-stream parser-opts)))
 
 (defn- split-parts [xml-path]
   (->> (string/split xml-path #"/")
@@ -64,9 +58,9 @@
            remaining-stream (rest stream)]
       (if (or (empty? stack) (empty? stream))
 
-        (let [elements (get-elements plucked-elements)]
+        (let [elements (get-elements! plucked-elements)]
           (if-not (empty? elements)
-                  (->PluckStream elements remaining-stream)))
+            (->PluckStream elements remaining-stream)))
 
         (let [nxt   (first remaining-stream)
               stack (cond
@@ -78,7 +72,7 @@
           (recur stack
                  (rest remaining-stream)))))))
 
-(defn skip [stream xml-path]
+(defn- skip [stream xml-path]
   (let [path-parts (split-parts xml-path)
         stream     (skip-until-start-tag stream)]
 
@@ -105,13 +99,42 @@
                      skip-until-start-tag)
                  (rest remaining-match)))))))
 
-(defn stream-plucks [stream & {:keys [descend-path]
-                               :or {descend-path nil}}]
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn -create-sax-streamer
+  "*Public fn, but not advised for direct use*
+  Simple wrapper over event-seq. Handles gzipped input if so indicated."
+  [file-path & {:keys [gzipped?]
+                :or   {gzipped? false}}]
+  (let [input-stream (get-input-stream file-path gzipped?)
+        parser-opts  {:skip-whitespace false}]
+    (xml/event-seq input-stream parser-opts)))
+
+
+(defn -stream-plucks
+  "*Use with caution*
+  Returns a stream of XML-event groups and the updated stream location just past this group.
+  Realizing the stream in its entirety is a strong possibility if not cautious, as much as
+  holding onto the stream head is."
+  [stream & {:keys [descend-path]
+             :or {descend-path nil}}]
   (let [stream (if descend-path
                  (skip stream descend-path)
                  stream)]
     (lazy-seq
       (when-let [nxt (pluck stream)]
-        (cons nxt (stream-plucks (:stream nxt)))))))
+        (cons nxt (-stream-plucks (:stream nxt)))))))
 
 
+(defn stream-plucks
+  "Friendly version over -stream-plucks.
+  The long stream of XML events does not escape, so the only stream to worry about is the
+  stream of XML-event groups or mini-DOMs. Usual holding-onto-the-head cautions apply."
+  [file-path & {:keys [gzipped? descend-path as-dom?]}]
+  (let [dom-fn (if as-dom?
+                 event-tree
+                 identity)]
+    (map (comp dom-fn :elements)
+         (-> file-path
+             (-create-sax-streamer :gzipped? gzipped?)
+             (-stream-plucks :descend-path descend-path)))))
