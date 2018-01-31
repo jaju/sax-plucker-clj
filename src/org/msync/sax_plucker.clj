@@ -2,8 +2,7 @@
   (:require [clojure.java.io :as io]
             [clojure.data.xml :as xml]
             [clojure.data.xml.tree :refer [event-tree]]
-            [clojure.string :as string]
-            [clojure.tools.logging :as log])
+            [clojure.string :as string])
   (:import [java.util.zip GZIPInputStream]
            [clojure.data.xml.event EndElementEvent StartElementEvent]))
 
