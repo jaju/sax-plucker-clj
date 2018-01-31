@@ -56,11 +56,19 @@ For example, you have an XML which looks like the following
 
 The following code will give you two groups of XML elements, each rooted at `item`
 ```clojure
-(require '[org.msync.sax-plucker :refer [create-sax-streamer skip]])
+(:require [org.msync.sax-plucker :refer [create-sax-streamer skip]]
+          [xml-in.core :refer [find-all]]) ;; https://github.com/tolitius/xml-in for testing.
 ;...
-(stream-plucks "sample.xml" :descend-path "Root/noisyTag/items" :as-dom? true)
+; Pseudo-clojure.test code
+(let [doms (stream-plucks "sample.xml" :descend-path "Root/noisyTag/items" :as-dom? true)
+           ;; Returns a stream of DOM trees rooted at the "item" nodes.
+      first-dom (first doms)
+      last-dom (last doms)]
+      (is (= ["I am some text in tagOne"] (find-all first-dom [:item :tagOne])))
+      (is (= ["I am some text in tagTwo"] (find-all first-dom [:item :tagTwo])))
+      (is (= ["I am some text in tagOne TWO"] (find-all last-dom [:item :tagOne])))
+      (is (= ["I am some text in tagTwo TWO"] (find-all last-dom [:item :tagTwo]))))
 
-;; Returns a stream of DOM trees rooted at the "item" nodes.
 ```
 
 More usage examples to follow.
