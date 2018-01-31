@@ -73,7 +73,7 @@ The default limit is 50000000 entities otherwise, after which the underlying XML
 See one example at https://github.com/dbpedia/extraction-framework/issues/487
 
 Notes:
-1. This library was quick-tested on a > 1.7G compressed XML file, and the aggregates matched perfectly 
+1. This library was quick-tested on a > 1.7G compressed XML file and more than 250M lines, and the aggregates matched perfectly 
 with a grep-check.
 
 ## License
