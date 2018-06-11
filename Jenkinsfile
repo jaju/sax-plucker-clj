@@ -1,14 +1,19 @@
 pipeline {
   agent any
   stages {
-    stage('build') {
+    stage('test') {
+      steps {
+        sh 'lein test'
+      }
+    }
+    stage('uberjar') {
       steps {
         sh 'lein uberjar'
       }
     }
-    stage('test') {
+    stage('deploy') {
       steps {
-        sh 'lein test'
+        sh 'lein install'
       }
     }
   }
